@@ -44,7 +44,6 @@ namespace TinyRelay
         private const string RelayKey = "relay";
         private const int MaxConnections = 100;
 
-        // Public Methods
         public bool Start(int port)
         {
             _netManager = new NetManager(this)
@@ -75,30 +74,29 @@ namespace TinyRelay
             }
         }
 
-        // NetEventListener Callbacks
+        // -------------------- INetEventListener --------------------
         public void OnConnectionRequest(ConnectionRequest request)
         {
-            // 接收端只要 key 正確，就接受連線；否則拒絕
+            // Key 驗證
             if (request.Data != null && request.Data.AvailableBytes > 0)
             {
                 string receivedKey = request.Data.GetString();
-                Console.WriteLine($"Received key: {receivedKey}");
+                Console.WriteLine($"[ConnectionRequest] Received key: {receivedKey}"); // ★ NEW LOG
 
                 if (receivedKey == RelayKey && _netManager.ConnectedPeerList.Count < MaxConnections)
                 {
-                    // 接受這個連線
                     request.AcceptIfKey(RelayKey);
-                    Console.WriteLine($"Connection accepted: {receivedKey}");
+                    Console.WriteLine($"[ConnectionRequest] Connection accepted: {receivedKey}"); // ★ NEW LOG
                 }
                 else
                 {
-                    Console.WriteLine($"Connection rejected: key mismatch or max limit. Received = {receivedKey}");
+                    Console.WriteLine($"[ConnectionRequest] Connection rejected: key mismatch or max limit. Received = {receivedKey}");
                     request.Reject();
                 }
             }
             else
             {
-                Console.WriteLine("Connection rejected: no key provided.");
+                Console.WriteLine("[ConnectionRequest] Connection rejected: no key provided.");
                 request.Reject();
             }
         }
@@ -106,13 +104,21 @@ namespace TinyRelay
         public void OnPeerConnected(NetPeer peer)
         {
             _peers.Add(peer);
-            Console.WriteLine($"[Peer Connected] PeerId={peer.Id}, EndPoint={peer.ToString()}");
+
+            // ★ NEW LOG
+            // 若想簡單猜「PeerId=0 可能是 Host」(視 Unity Transport 的分配策略)，可加上 (Host?) 提示
+            // 但其實 Relay 不真正知道誰是 Host。
+            var maybeHostMark = (peer.Id == 0) ? "(可能是Host?)" : "";
+            Console.WriteLine($"[Peer Connected] PeerId={peer.Id}{maybeHostMark}, EndPoint={peer.ToString()}");
         }
 
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             _peers.Remove(peer);
-            Console.WriteLine($"[Peer Disconnected] PeerId={peer.Id}, Reason={disconnectInfo.Reason}");
+
+            // ★ NEW LOG
+            var maybeHostMark = (peer.Id == 0) ? "(可能是Host?)" : "";
+            Console.WriteLine($"[Peer Disconnected] PeerId={peer.Id}{maybeHostMark}, Reason={disconnectInfo.Reason}, EndPoint={peer.ToString()}");
         }
 
         public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
@@ -122,20 +128,25 @@ namespace TinyRelay
 
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
         {
-            // 1. 讀取封包
             int length = reader.AvailableBytes;
             byte[] data = new byte[length];
             reader.GetBytes(data, length);
 
-            // 2. 轉發封包給所有其他 peers
+            // ★ NEW LOG
+            // 1) 紀錄「誰」送來資料 (PeerId) + 端點
+            // 2) 紀錄封包長度
+            Console.WriteLine($"[OnNetworkReceive] Received {length} bytes from PeerId={peer.Id}, Endpoint={peer.ToString()}.");
+
+            // 轉發給其他 peers
             foreach (var otherPeer in _peers)
             {
                 if (otherPeer != peer && otherPeer.ConnectionState == ConnectionState.Connected)
                 {
+                    // ★ NEW LOG
+                    Console.WriteLine($"[OnNetworkReceive] -> Forwarding {length} bytes from PeerId={peer.Id} to PeerId={otherPeer.Id}. Source={peer.ToString()}, Target={otherPeer.ToString()}");
                     otherPeer.Send(data, deliveryMethod);
                 }
             }
-
             reader.Recycle();
         }
 
@@ -144,12 +155,9 @@ namespace TinyRelay
             // 不處理 unconnected message
         }
 
-        public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
-        {
-            // 可選：紀錄延遲
-        }
+        public void OnNetworkLatencyUpdate(NetPeer peer, int latency) { /* optional */ }
 
-        // Private Methods
+        // -------------------- Private --------------------
         private void PollLoop()
         {
             while (_running)
