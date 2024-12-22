@@ -109,7 +109,7 @@ namespace Shared
             }
 
             // Logging: Log the size of the serialized data
-            Console.WriteLine($"[Serialize] Packet serialized with total length: {writer.Length} bytes.");
+            // Console.WriteLine($"[Serialize] Packet serialized with total length: {writer.Length} bytes.");
         }
 
         // Serialize to a new writer without pooling
@@ -129,7 +129,7 @@ namespace Shared
             var writer = SerializeToWriter();
 
             // Logging: Log the data being sent
-            Console.WriteLine($"[Send] Sending Packet - Type: {Type}, Role: {Role}, SenderId: {SenderId}, RecipientId: {RecipientId}, DataLength: {Data.Length}, SerializedLength: {writer.Length} bytes.");
+            // Console.WriteLine($"[Send] Sending Packet - Type: {Type}, Role: {Role}, SenderId: {SenderId}, RecipientId: {RecipientId}, DataLength: {Data.Length}, SerializedLength: {writer.Length} bytes.");
 
             peer.Send(writer, method);
 
@@ -168,7 +168,7 @@ namespace Shared
                 }
 
                 // Logging: Log the details of the deserialized packet
-                Console.WriteLine($"[Deserialize] Packet deserialized - Type: {type}, Role: {role}, SenderId: {senderId}, RecipientId: {recipientId}, DataLength: {dataLength} bytes.");
+                // Console.WriteLine($"[Deserialize] Packet deserialized - Type: {type}, Role: {role}, SenderId: {senderId}, RecipientId: {recipientId}, DataLength: {dataLength} bytes.");
 
                 return new Packet(type)
                     .WithRole(role)
