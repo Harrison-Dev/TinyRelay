@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  tinyrelay:
+    build: .
+    image: tinyrelay:latest
+    container_name: tinyrelay
+    ports:
+      - "8080:9050" # Maps host port 8080 to container port 9050
+    restart: unless-stopped
+    environment:
+      # Add environment variables here if your app supports configuration via env vars
+      # Example:
+      # - PORT=9050
