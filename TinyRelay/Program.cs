@@ -15,6 +15,7 @@ namespace TinyRelay
             int port = 9050;
             Console.WriteLine("Starting TinyRelay on port " + port);
             var server = new RelayServer();
+
             if (!server.Start(port))
             {
                 Console.WriteLine("Failed to start the relay server.");
@@ -22,12 +23,23 @@ namespace TinyRelay
             }
 
             Console.WriteLine("RelayServer started on port " + port + ".");
-            Console.WriteLine("Press Enter to stop...");
-            Console.ReadLine();
+            Console.WriteLine("Press Ctrl+C to stop...");
+
+            // Block the application with a simple loop to keep it running
+            var stopEvent = new ManualResetEventSlim();
+            Console.CancelKeyPress += (sender, e) =>
+            {
+                Console.WriteLine("Stopping server...");
+                e.Cancel = true; // Prevent immediate termination
+                stopEvent.Set();
+            };
+
+            stopEvent.Wait(); // Wait until Ctrl+C is pressed
 
             server.Stop();
             Console.WriteLine("Server stopped.");
         }
+
     }
 
     public class RelayServer : INetEventListener

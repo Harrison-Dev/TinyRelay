@@ -1,14 +1,23 @@
 version: '3.8'
 
+networks:
+  web:
+    external: true
+    name: traefik_web
+
 services:
   tinyrelay:
     build: .
     image: tinyrelay:latest
     container_name: tinyrelay
-    ports:
-      - "8080:9050" # Maps host port 8080 to container port 9050
     restart: unless-stopped
-    environment:
-      # Add environment variables here if your app supports configuration via env vars
-      # Example:
-      # - PORT=9050
+    expose:
+      - "9050"
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      # UDP Router
+      - "traefik.udp.routers.tinyrelay.entrypoints=udp"
+      - "traefik.udp.routers.tinyrelay.service=tinyrelay"
+      - "traefik.udp.services.tinyrelay.loadbalancer.server.port=9050"
