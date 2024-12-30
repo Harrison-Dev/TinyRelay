@@ -10,7 +10,11 @@ using RandomNetKit.Core.Shared;
 
 namespace RandomNetKit.Transport.Unity
 {
-    public class LiteNetLibTransport : NetworkTransport, INetEventListener
+    /// <summary>
+    /// Unity Transport implementation that uses Relay Server for connection.
+    /// This transport is based on LiteNetLib and provides reliable UDP communication through a relay server.
+    /// </summary>
+    public class RelayTransport : NetworkTransport, INetEventListener
     {
         enum HostType
         {
