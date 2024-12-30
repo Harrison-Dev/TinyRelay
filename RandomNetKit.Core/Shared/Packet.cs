@@ -11,14 +11,22 @@ namespace RandomNetKit.Core.Shared
         Data = 0x03,
         IdAssign = 0x04,
         NotifyJoin = 0x05,
-        NotifyLeave = 0x06
+        NotifyLeave = 0x06,
+        
+        // NAT Punch packets
+        PunchRequest = 0x10,     // Client -> Server: Request to connect to another peer
+        PunchInfo = 0x11,        // Server -> Client: Send peer's endpoint info
+        PunchHole = 0x12,        // Client -> Client: Punch hole packet
+        PunchAck = 0x13,         // Client -> Client: Acknowledge punch success
+        PunchFailed = 0x14,      // Client -> Server: Notify punch failed, fallback to relay
     }
 
     public enum Role : byte
     {
         Host = 0x01,
         Client = 0x02,
-        Relay = 0x03
+        Relay = 0x03,
+        PunchServer = 0x04
     }
 
     public sealed class Packet : IDisposable
