@@ -1,4 +1,7 @@
-﻿namespace RandomNetKit.Relay.Server;
+﻿using System;
+using System.Threading;
+
+namespace RandomNetKit.Relay;
 
 public class Program
 {
