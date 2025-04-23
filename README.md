@@ -1,71 +1,71 @@
 # TinyRelay
 
-一个基于LiteNetLib的轻量级网络中继服务器，专为Unity多人游戏设计。
+一個基於 LiteNetLib 的輕量級網路中繼伺服器，專為 Unity 多人遊戲設計。
 
-## 项目结构
+## 專案結構
 
-- **TinyRelay.Server**: 中继服务器实现
-- **TinyRelay.Client**: Unity客户端集成（NetworkTransport实现）
-- **TinyRelay.Shared**: 共享代码（数据包定义等）
-- **External/LiteNetLib**: LiteNetLib子模块
+- **TinyRelay.Server**: 中繼伺服器實現
+- **TinyRelay.Client**: Unity 客戶端整合（NetworkTransport 實現）
+- **TinyRelay.Shared**: 共享程式碼（資料包定義等）
+- **External/LiteNetLib**: LiteNetLib 子模組
 
-## 构建要求
+## 構建要求
 
 - .NET 8.0 SDK
-- Unity 2022.3 或更高版本（用于客户端）
-- Unity Netcode for GameObjects包
+- Unity 2022.3 或更高版本（用於客戶端）
+- Unity Netcode for GameObjects 套件
 
 ## 如何使用
 
-### 服务器
+### 伺服器
 
-1. 克隆仓库并初始化子模块：
+1. 複製儲存庫並初始化子模組：
    ```bash
    git clone <repository-url>
    cd TinyRelay
    git submodule update --init --recursive
    ```
 
-2. 构建并运行服务器：
+2. 構建並執行伺服器：
    ```bash
    dotnet build
    cd TinyRelay.Server/bin/Debug/net8.0
    dotnet TinyRelay.Server.dll
    ```
 
-### Unity客户端
+### Unity 客戶端
 
-1. 在Unity项目中添加以下包：
+1. 在 Unity 專案中添加以下套件：
    - com.unity.netcode.gameobjects
    - com.unity.transport
 
-2. 将以下DLL文件复制到Unity项目的Assets/Plugins目录：
+2. 將以下 DLL 檔案複製到 Unity 專案的 Assets/Plugins 目錄：
    - TinyRelay.Client.dll
    - TinyRelay.Shared.dll
    - LiteNetLib.dll
 
-3. 在NetworkManager组件上，将Transport设置为LiteNetLibTransport
+3. 在 NetworkManager 組件上，將 Transport 設定為 LiteNetLibTransport
 
-4. 配置LiteNetLibTransport组件：
-   - Address: 中继服务器IP地址
-   - Port: 中继服务器端口（默认9050）
-   - BaseKey: 连接密钥（可选）
+4. 設定 LiteNetLibTransport 組件：
+   - Address: 中繼伺服器 IP 位址
+   - Port: 中繼伺服器連接埠（預設 9050）
+   - BaseKey: 連接金鑰（可選）
 
-## 开发说明
+## 開發說明
 
-- 服务器使用.NET 8.0
-- 客户端库使用.NET Standard 2.1以确保Unity兼容性
-- 使用git submodule方式集成LiteNetLib以便于源码级调试和定制
+- 伺服器使用 .NET 8.0
+- 客戶端函式庫使用 .NET Standard 2.1 以確保 Unity 相容性
+- 使用 git submodule 方式整合 LiteNetLib 以便於原始碼級偵錯和客製化
 
-## Docker支持
+## Docker 支援
 
-项目包含Dockerfile，可以使用以下命令构建和运行容器：
+專案包含 Dockerfile，可以使用以下指令建立和執行容器：
 
 ```bash
 docker build -t tinyrelay .
 docker run -p 9050:9050 tinyrelay
 ```
 
-## 许可证
+## 授權條款
 
-MIT License 
+MIT License
