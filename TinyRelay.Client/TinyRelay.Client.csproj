@@ -5,7 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <DefineConstants>UNITY_5_3_OR_NEWER</DefineConstants>
+    <!-- 仍然保留條件編譯符號，但不再依賴環境變數 -->
+    <DefineConstants>$(DefineConstants);UNITY_5_3_OR_NEWER;USE_UNITY_API</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,12 +14,10 @@
     <ProjectReference Include="../External/LiteNetLib/LiteNetLib/LiteNetLib.csproj" />
   </ItemGroup>
 
+  <!-- 直接引用本地的 UnityEngine.dll -->
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>$(UNITY_REFERENCES_PATH)/UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Netcode.Runtime">
-      <HintPath>$(UNITY_REFERENCES_PATH)/Unity.Netcode.Runtime.dll</HintPath>
+      <HintPath>../External/Unity/UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
 
