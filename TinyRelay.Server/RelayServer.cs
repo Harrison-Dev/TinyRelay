@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using LiteNetLib;
-using LiteNetLib.Utils;
 using TinyRelay.Shared;
 
 namespace TinyRelay.Server
